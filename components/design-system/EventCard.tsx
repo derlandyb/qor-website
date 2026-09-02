@@ -27,11 +27,19 @@ export interface EventCardProps {
   flyerUrl: string | null;
   startsAt: string;
   status: EventStatus;
-  venueName: string;
+  /**
+   * Rendered in place of design-system.md's `{venue_name}` — qor-api's
+   * public Event/EventDetail JSON has no venue-name field at all (only
+   * `address`), so this shows the address text instead. Optional since the
+   * list endpoint's `address` can be null.
+   */
+  location: string | null;
   city: City;
-  genre: string;
-  mapsUrl: string;
-  instagramUrl: string;
+  /** Omitted (no genre tag rendered) when unset — qor-api's Event only has a raw genre_id, no resolvable name, at both list and detail level (no genre-list endpoint yet). */
+  genre?: string;
+  /** Omitted (no button rendered) when unset — not every context has a resolved maps/Instagram URL yet (e.g. the list view, before a promoter/venue lookup). */
+  mapsUrl?: string;
+  instagramUrl?: string;
   /** Position in the render loop — drives card-enter's per-card stagger delay via --card-index. */
   index: number;
 }
@@ -46,7 +54,7 @@ export function EventCard({
   flyerUrl,
   startsAt,
   status,
-  venueName,
+  location,
   city,
   genre,
   mapsUrl,
@@ -92,9 +100,11 @@ export function EventCard({
           </div>
         )}
 
-        <div className="absolute top-3 right-3">
-          <GenreTag name={genre} />
-        </div>
+        {genre && (
+          <div className="absolute top-3 right-3">
+            <GenreTag name={genre} />
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-2 p-4">
@@ -104,7 +114,7 @@ export function EventCard({
 
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
-            <span className="font-semibold text-[15px] text-[#F5F6FA]">{venueName}</span>
+            <span className="font-semibold text-[15px] text-[#F5F6FA]">{location ?? "Local a confirmar"}</span>
             <span className="text-[13px] text-[#9A9FB0]">
               {time}, {dayOfWeek}
             </span>
@@ -114,10 +124,12 @@ export function EventCard({
           </span>
         </div>
 
-        <div className="flex gap-2 mt-2">
-          <CtaButton variant="map" href={mapsUrl} />
-          <CtaButton variant="instagram" href={instagramUrl} />
-        </div>
+        {(mapsUrl || instagramUrl) && (
+          <div className="flex gap-2 mt-2">
+            {mapsUrl && <CtaButton variant="map" href={mapsUrl} />}
+            {instagramUrl && <CtaButton variant="instagram" href={instagramUrl} />}
+          </div>
+        )}
       </div>
     </article>
   );

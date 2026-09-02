@@ -56,6 +56,16 @@
 }
 
 /**
+ * Bottom-anchored scrim gradient, shared between HeroFeature and EventHero's
+ * full-bleed photo heroes to avoid duplicating the same gradient recipe
+ * twice. Matches Tailwind's `bg-gradient-to-t from-black/80 via-black/20
+ * to-transparent` visually (via-stop at the midpoint).
+ */
+.hero-scrim {
+  background-image: linear-gradient(to top, rgb(0 0 0 / 0.8), rgb(0 0 0 / 0.2) 50%, transparent);
+}
+
+/**
  * §3 — card entrance animation. `--card-index` isn't specified by the
  * design system itself (no DOM-wiring example given); EventCard sets it via
  * an inline style from its render-loop index, so `animation-delay` staggers
@@ -94,4 +104,32 @@
 
 .animate-pulse-glow {
   animation: pulse-glow 1.8s ease-in-out infinite;
+}
+
+/**
+ * Marquee's continuous-loop ticker. Linear (not eased) timing so the scroll
+ * speed never varies, and 36s long enough to read comfortably without
+ * feeling rushed; the track duplicates its content, so translateX(-50%)
+ * lands exactly at the seam between the original and duplicate copies.
+ */
+@keyframes scroll-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: scroll-left 36s linear infinite;
+}
+
+/* Motion-sensitive users get static content instead of any looping animation. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-card-enter,
+  .animate-pulse-glow {
+    animation: none;
+  }
 }

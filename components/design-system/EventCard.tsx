@@ -85,6 +85,12 @@ export function EventCard({
           <PlaceholderImage />
         )}
 
+        <div
+          data-testid="event-card-scrim"
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/50 to-transparent pointer-events-none"
+        />
+
         {isLive ? (
           <div className="absolute top-3 left-3">
             <LivePulseBadge />

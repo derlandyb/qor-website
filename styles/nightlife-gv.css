@@ -125,6 +125,16 @@
   animation: scroll-left 36s linear infinite;
 }
 
+/* Hides the native scrollbar on horizontally-scrollable rows (carousels, chip bars) while keeping scroll/drag/programmatic scrollBy working. */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Motion-sensitive users get static content instead of any looping animation. */
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee,

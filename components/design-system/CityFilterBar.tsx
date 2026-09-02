@@ -35,7 +35,7 @@ export interface CityFilterBarProps {
 /** design-system.md §4.2, ported near-verbatim. */
 export function CityFilterBar({ activeCity, onSelect }: CityFilterBarProps) {
   return (
-    <nav className="flex flex-wrap gap-2 px-4 py-3 overflow-x-auto">
+    <nav className="flex flex-wrap gap-2 px-4 py-3 overflow-x-auto scrollbar-hide">
       {CITY_VALUES.map((city) => {
         const isActive = city === activeCity;
         const accent = CITY_ACCENT[city];

@@ -19,6 +19,12 @@ describe("CityFilterBar", () => {
     expect(cariacica).toHaveClass("bg-[#B14EFF]", "text-white", "scale-105");
   });
 
+  test("GIVEN the filter bar renders WHEN the nav container is queried THEN it hides its native scrollbar", () => {
+    render(<CityFilterBar activeCity="vitoria" onSelect={jest.fn()} />);
+
+    expect(screen.getByRole("navigation")).toHaveClass("scrollbar-hide");
+  });
+
   test("GIVEN a city button WHEN clicked THEN onSelect fires with that city", async () => {
     const user = userEvent.setup();
     const onSelect = jest.fn();

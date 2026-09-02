@@ -115,6 +115,22 @@ describe("lib/api/client request builders", () => {
     expect(url).toContain("/auth/email/verification-notification");
   });
 
+  test("GIVEN an email and code WHEN verifyEmailCode is called THEN it POSTs both to /auth/email/verify-code", async () => {
+    await client.verifyEmailCode("fa@example.com", "123456");
+
+    const [url, init] = lastCall();
+    expect(url).toContain("/auth/email/verify-code");
+    expect(JSON.parse(init.body as string)).toEqual({ email: "fa@example.com", code: "123456" });
+  });
+
+  test("GIVEN an email and code WHEN verifyPasswordResetCode is called THEN it POSTs both to /auth/password/verify-code", async () => {
+    await client.verifyPasswordResetCode("fa@example.com", "123456");
+
+    const [url, init] = lastCall();
+    expect(url).toContain("/auth/password/verify-code");
+    expect(JSON.parse(init.body as string)).toEqual({ email: "fa@example.com", code: "123456" });
+  });
+
   test("WHEN getProfile is called THEN it GETs /profile", async () => {
     await client.getProfile();
 

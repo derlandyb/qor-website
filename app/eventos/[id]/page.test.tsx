@@ -213,4 +213,42 @@ describe("app/eventos/[id]/page.tsx (event detail, integration)", () => {
     expect(mapAnchor).toBeInTheDocument();
     expect(mapAnchor).toHaveTextContent("Rua A, 100");
   });
+
+  test("GIVEN the URL hash is #map WHEN the event finishes loading THEN it scrolls the map element into view", async () => {
+    Element.prototype.scrollIntoView = jest.fn();
+    window.location.hash = "#map";
+
+    global.fetch = jest.fn().mockImplementation((input: string | URL) => {
+      if (isDetailRequest(input)) {
+        return Promise.resolve(jsonResponse({ data: baseEvent({ address: "Rua A, 100" }) }));
+      }
+      return Promise.resolve(listResponse([]));
+    });
+
+    render(<EventDetailPage params={Promise.resolve({ id: "1" })} />);
+
+    await screen.findByText("Show A");
+
+    expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth" });
+
+    window.location.hash = "";
+  });
+
+  test("GIVEN the URL hash is not #map WHEN the event finishes loading THEN it does not scroll", async () => {
+    Element.prototype.scrollIntoView = jest.fn();
+    window.location.hash = "";
+
+    global.fetch = jest.fn().mockImplementation((input: string | URL) => {
+      if (isDetailRequest(input)) {
+        return Promise.resolve(jsonResponse({ data: baseEvent({ address: "Rua A, 100" }) }));
+      }
+      return Promise.resolve(listResponse([]));
+    });
+
+    render(<EventDetailPage params={Promise.resolve({ id: "1" })} />);
+
+    await screen.findByText("Show A");
+
+    expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled();
+  });
 });

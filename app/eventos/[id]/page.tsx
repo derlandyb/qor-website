@@ -69,6 +69,17 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
   // fetch resolves and the effect re-fires with the real city.
   const { events: cityEvents } = useEventList({ city: event?.city });
 
+  // "Ver no mapa" links to `#map`, but this page renders a loading state
+  // until `event` resolves, so the `#map` element doesn't exist yet when
+  // the browser/router first tries to scroll to it. Once `event` is
+  // populated (and the map section renders), scroll to it manually.
+  useEffect(() => {
+    if (!event) return;
+    if (window.location.hash === "#map") {
+      document.getElementById("map")?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [event]);
+
   async function handleShare() {
     if (!event) return;
     const result = await shareEvent(event.title, window.location.href);

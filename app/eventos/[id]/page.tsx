@@ -12,10 +12,13 @@
  * wording (the safest reading; not explicitly spelled out further).
  */
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { CtaButton } from "../../../components/design-system/CtaButton";
+import { EventCarousel } from "../../../components/design-system/EventCarousel";
+import { EventHero } from "../../../components/design-system/EventHero";
 import { GoogleMap } from "../../../components/design-system/GoogleMap";
-import { PlaceholderImage } from "../../../components/design-system/PlaceholderImage";
-import { useEventDetail } from "../../../hooks/useEvents";
+import { useEventDetail, useEventList } from "../../../hooks/useEvents";
+import { CITY_LABELS } from "../../../lib/enums/city";
 
 interface EventDetailPageProps {
   params: Promise<{ id: string }>;
@@ -46,6 +49,7 @@ async function shareEvent(title: string, url: string): Promise<"shared" | "copie
 }
 
 export default function EventDetailPage({ params }: EventDetailPageProps) {
+  const router = useRouter();
   const [id, setId] = useState<string | null>(null);
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
 
@@ -60,6 +64,10 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
   }, [params]);
 
   const { event, loading, error } = useEventDetail(id === null ? null : Number(id));
+  // Called unconditionally (rules of hooks) even before `event` resolves —
+  // `city: undefined` just fetches the unfiltered list until the detail
+  // fetch resolves and the effect re-fires with the real city.
+  const { events: cityEvents } = useEventList({ city: event?.city });
 
   async function handleShare() {
     if (!event) return;
@@ -101,73 +109,80 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
   }
 
   const startsAtDate = new Date(event.starts_at);
+  const hasTicketButton = !event.is_free && Boolean(event.ticket_url);
+  const otherCityEvents = Array.isArray(cityEvents)
+    ? cityEvents.filter((candidate) => candidate.id !== event.id)
+    : [];
 
   return (
-    <div className="flex flex-col gap-4 pb-12">
-      <div className="relative aspect-[4/5] w-full max-w-md overflow-hidden rounded-[14px] bg-[#12141D]">
-        {event.cover_image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element -- flyer source is arbitrary organizer-uploaded media
-          <img src={event.cover_image_url} alt={`${event.title} flyer`} className="h-full w-full object-cover" />
-        ) : (
-          <PlaceholderImage />
-        )}
-      </div>
+    <div className="flex flex-col gap-6 pb-12">
+      <EventHero event={event} onBack={() => router.back()} onShare={() => void handleShare()} />
 
-      <div className="flex flex-col gap-3 px-4">
-        <h1 className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">{event.title}</h1>
-
+      <div className="flex flex-col gap-3 px-4 sm:px-8">
         <div className="flex flex-wrap gap-4 text-[13px] text-[#9A9FB0]">
           <span>{startsAtDate.toLocaleDateString("pt-BR", { dateStyle: "long" })}</span>
           <span>{startsAtDate.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
           <span>{event.is_free ? "Gratuito" : "Pago"}</span>
         </div>
 
-        <p className="text-[14px] text-[#F5F6FA]">{event.description}</p>
-
-        <div className="flex gap-2">
-          {!event.is_free && event.ticket_url && <CtaButton variant="map" href={event.ticket_url} />}
-          <button
-            type="button"
-            onClick={() => void handleShare()}
-            className="flex-1 rounded-[12px] border border-[#2A2E3B] px-4 py-2.5 text-[14px] font-semibold text-[#F5F6FA] hover:bg-white/5"
-          >
-            Compartilhar
-          </button>
-        </div>
         {shareFeedback && (
           <p role="status" className="text-[13px] text-[#2EC5FF]">
             {shareFeedback}
           </p>
         )}
+      </div>
 
-        {event.address && (
-          <div className="flex flex-col gap-2">
-            <p className="text-[13px] text-[#9A9FB0]">{event.address}</p>
-            <GoogleMap address={event.address} />
-          </div>
-        )}
+      <div className="flex flex-col gap-6 px-4 sm:px-8 lg:grid lg:grid-cols-3 lg:items-start lg:gap-8">
+        <div className="flex flex-col gap-3 lg:col-span-2">
+          <p className="text-[14px] text-[#F5F6FA]">{event.description}</p>
 
-        {event.tagged_promoters.length > 0 && (
-          <div className="flex flex-col gap-2">
-            <h2 className="text-[15px] font-semibold text-[#F5F6FA]">Organizadores</h2>
-            {event.tagged_promoters.map((promoter) => (
-              <div key={promoter.id} className="flex flex-col gap-1 rounded-[12px] border border-[#2A2E3B] p-3">
-                <span className="text-[14px] font-semibold text-[#F5F6FA]">{promoter.name}</span>
-                {promoter.instagram && (
-                  <a
-                    href={`https://instagram.com/${promoter.instagram.replace(/^@/, "")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[13px] text-[#2EC5FF] underline"
-                  >
-                    {promoter.instagram}
-                  </a>
-                )}
-              </div>
-            ))}
-          </div>
+          {event.address && (
+            <div id="map" className="flex flex-col gap-2">
+              <p className="text-[13px] text-[#9A9FB0]">{event.address}</p>
+              <GoogleMap address={event.address} />
+            </div>
+          )}
+
+          {event.tagged_promoters.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <h2 className="text-[15px] font-semibold text-[#F5F6FA]">Organizadores</h2>
+              {event.tagged_promoters.map((promoter) => (
+                <div key={promoter.id} className="flex flex-col gap-1 rounded-[12px] border border-[#2A2E3B] p-3">
+                  <span className="text-[14px] font-semibold text-[#F5F6FA]">{promoter.name}</span>
+                  {promoter.instagram && (
+                    <a
+                      href={`https://instagram.com/${promoter.instagram.replace(/^@/, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[13px] text-[#2EC5FF] underline"
+                    >
+                      {promoter.instagram}
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {hasTicketButton && event.ticket_url && (
+          <aside className="lg:col-span-1">
+            <div className="flex flex-col gap-3 rounded-[14px] border border-[#2A2E3B] p-4 lg:sticky lg:top-24">
+              <span className="text-[13px] text-[#9A9FB0]">
+                {startsAtDate.toLocaleDateString("pt-BR", { dateStyle: "long" })}
+              </span>
+              <CtaButton variant="map" href={event.ticket_url} />
+            </div>
+          </aside>
         )}
       </div>
+
+      {otherCityEvents.length > 0 && (
+        <div className="flex flex-col gap-3 px-4 sm:px-8">
+          <h2 className="text-[15px] font-semibold text-[#F5F6FA]">Mais eventos em {CITY_LABELS[event.city]}</h2>
+          <EventCarousel events={otherCityEvents} />
+        </div>
+      )}
     </div>
   );
 }

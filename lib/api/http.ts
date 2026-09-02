@@ -79,7 +79,10 @@ export const LOGIN_PATH = "/entrar";
  * normal state, never something to bounce away from. `/eventos` is matched
  * by prefix since it also covers the `/eventos/[id]` detail route.
  * Single source of truth — a future root layout imports this instead of
- * re-declaring its own list.
+ * re-declaring its own list. TODO(Milestone 2, W31): `/favoritos` should
+ * also allow anonymous browsing per favorites-social's spec (only the
+ * favorite-toggle action itself needs auth) — add it here when that page
+ * exists, don't let it fall through as an unintended login-wall regression.
  */
 export const PUBLIC_PATHS = [
   "/",

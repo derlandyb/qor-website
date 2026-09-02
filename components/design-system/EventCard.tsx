@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { CITY_LABELS, type City } from "../../lib/enums/city";
 import type { EventStatus } from "../../lib/enums/event-status";
+import { isEventLive } from "../../lib/events/isLive";
 import { GenreTag } from "./GenreTagSet";
 import { LivePulseBadge } from "./LivePulseBadge";
 import { PlaceholderImage } from "./PlaceholderImage";
@@ -36,11 +37,9 @@ export interface EventCardProps {
 }
 
 /**
- * design-system.md §4.1, ported near-verbatim. `isLive` (status published +
- * starts_at already in the past) shows LivePulseBadge instead of the date
- * badge — qor-api's Event has no explicit "happening right now"/ends_at
- * field, so this is a deliberate heuristic, not a fabricated API contract
- * (confirmed with the user rather than guessed).
+ * design-system.md §4.1, ported near-verbatim. isEventLive() (lib/events/
+ * isLive.ts) shows LivePulseBadge instead of the date badge — see that
+ * file's docblock for the heuristic and its known limitation.
  */
 export function EventCard({
   title,
@@ -55,11 +54,7 @@ export function EventCard({
   index,
 }: EventCardProps) {
   const startsAtDate = new Date(startsAt);
-  // The live/date-badge choice is *supposed* to change as real time passes —
-  // that's the whole point of the heuristic (see this file's own docblock),
-  // not a memoization hazard to design around.
-  // eslint-disable-next-line react-hooks/purity
-  const isLive = status === "published" && startsAtDate.getTime() <= Date.now();
+  const isLive = isEventLive(status, startsAt);
   const month = MONTH_LABELS[startsAtDate.getMonth()];
   const day = startsAtDate.getDate();
   const time = startsAtDate.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });

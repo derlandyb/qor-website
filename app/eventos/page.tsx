@@ -8,16 +8,23 @@
  * filter UI (same gap flagged for qor-admin's EventForm; STATE.md Todo).
  */
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { CityFilterBar } from "../../components/design-system/CityFilterBar";
 import { EventCard } from "../../components/design-system/EventCard";
 import { EmptyState } from "../../components/design-system/EmptyState";
 import { Button } from "../../components/design-system/Button";
 import { useEventList } from "../../hooks/useEvents";
-import type { City } from "../../lib/enums/city";
+import { CITY_VALUES, type City } from "../../lib/enums/city";
 
-export default function ExplorePage() {
-  const [city, setCity] = useState<City>("vitoria");
+function isCity(value: string | null): value is City {
+  return value !== null && (CITY_VALUES as readonly string[]).includes(value);
+}
+
+function ExploreContent() {
+  const searchParams = useSearchParams();
+  const initialCity = searchParams.get("city");
+  const [city, setCity] = useState<City>(isCity(initialCity) ? initialCity : "vitoria");
   const { events, loading, error, hasMore, loadMore } = useEventList({ city });
 
   return (
@@ -66,5 +73,13 @@ export default function ExplorePage() {
         </>
       )}
     </main>
+  );
+}
+
+export default function ExplorePage() {
+  return (
+    <Suspense fallback={<div className="p-4 text-sm text-[#9A9FB0]">Carregando...</div>}>
+      <ExploreContent />
+    </Suspense>
   );
 }

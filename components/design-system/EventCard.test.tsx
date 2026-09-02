@@ -83,7 +83,7 @@ describe("EventCard", () => {
     expect(card).toHaveClass("animate-card-enter");
   });
 
-  test("GIVEN the card renders THEN the scrim element is present behind the badges", () => {
+  test("GIVEN full event data WHEN it renders THEN the scrim element is present behind the badges", () => {
     render(<EventCard {...baseProps} />);
 
     expect(screen.getByTestId("event-card-scrim")).toBeInTheDocument();

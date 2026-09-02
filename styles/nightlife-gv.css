@@ -95,3 +95,31 @@
 .animate-pulse-glow {
   animation: pulse-glow 1.8s ease-in-out infinite;
 }
+
+/**
+ * Marquee's continuous-loop ticker. Linear (not eased) timing so the scroll
+ * speed never varies, and 36s long enough to read comfortably without
+ * feeling rushed; the track duplicates its content, so translateX(-50%)
+ * lands exactly at the seam between the original and duplicate copies.
+ */
+@keyframes scroll-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: scroll-left 36s linear infinite;
+}
+
+/* Motion-sensitive users get static content instead of any looping animation. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-card-enter,
+  .animate-pulse-glow {
+    animation: none;
+  }
+}

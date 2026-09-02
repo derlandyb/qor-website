@@ -40,6 +40,15 @@ describe("EventCarousel", () => {
     expect(links[1]).toHaveAttribute("href", "/eventos/2");
   });
 
+  test("GIVEN a list of events WHEN the carousel renders THEN the scroll container hides its native scrollbar", () => {
+    const events = [makeEvent({ id: 1, title: "Baile do Zé" })];
+
+    const { container } = render(<EventCarousel events={events} />);
+
+    const scrollContainer = container.querySelector(".overflow-x-auto");
+    expect(scrollContainer).toHaveClass("scrollbar-hide");
+  });
+
   test("GIVEN an empty events array WHEN the carousel renders THEN nothing is rendered", () => {
     const { container } = render(<EventCarousel events={[]} />);
 

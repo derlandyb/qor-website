@@ -42,7 +42,7 @@ export function EventCarousel({ events }: EventCarouselProps) {
 
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth"
+        className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide"
       >
         {events.map((event, index) => (
           <Link

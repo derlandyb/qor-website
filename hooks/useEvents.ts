@@ -6,7 +6,7 @@
  * pagination via loadMore(). A filter change (city/genre) replaces the whole
  * list from page 1, same as the initial load.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getEvent, listEvents, type ListEventsFilters } from "../lib/api/client";
 import { ApiError } from "../lib/api/http";
 import { EVENT_LIST_POLLING_INTERVAL_SECONDS } from "../lib/config";
@@ -88,15 +88,25 @@ export interface EventDetailState {
 /**
  * `id` is `null` until the caller has a real one to fetch (e.g. Next.js 16's
  * async `params` hasn't resolved yet) — skipping the fetch entirely in that
- * case, rather than substituting a placeholder like `0`, avoids a real race:
- * a placeholder-id request and the real-id request can resolve out of
- * order, letting the placeholder's 404 clobber the real event after it
- * already loaded.
+ * case, rather than substituting a placeholder like `0`, avoids a race where
+ * a placeholder-id request and the real-id request resolve out of order and
+ * the placeholder's 404 clobbers the real event after it already loaded.
+ *
+ * The same class of race exists one level up too: the App Router reuses this
+ * same mounted component (and this same hook instance) across a client-side
+ * navigation between two event ids without remounting it, so an in-flight
+ * fetch for the previous id can still resolve after the new id's fetch and
+ * overwrite it. `latestId` guards against that — a response is only applied
+ * if the id it was fetched for is still the current one.
  */
 export function useEventDetail(id: number | null): EventDetailState {
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const latestId = useRef(id);
+  useEffect(() => {
+    latestId.current = id;
+  }, [id]);
 
   const refetch = useCallback(async () => {
     if (id === null) return;
@@ -104,12 +114,14 @@ export function useEventDetail(id: number | null): EventDetailState {
     setError(null);
     try {
       const result = await getEvent(id);
+      if (latestId.current !== id) return;
       setEvent(result.data);
     } catch (err) {
+      if (latestId.current !== id) return;
       setError(messageOf(err));
       setEvent(null);
     } finally {
-      setLoading(false);
+      if (latestId.current === id) setLoading(false);
     }
   }, [id]);
 

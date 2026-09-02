@@ -72,4 +72,53 @@ describe("event hooks (integration, real client + http stack)", () => {
     expect(result.current.loading).toBe(true);
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  function eventPayload(id: number) {
+    return jsonResponse({
+      data: {
+        id,
+        title: `Show ${id}`,
+        description: "desc",
+        cover_image_url: null,
+        starts_at: "2099-12-31T22:00:00Z",
+        city: "vitoria",
+        genre_id: 1,
+        address: "Rua X",
+        is_free: true,
+        ticket_url: null,
+        capacity: null,
+        age_rating: null,
+        notes: null,
+        status: "published",
+        tagged_promoters: [],
+      },
+    });
+  }
+
+  test("GIVEN the id changes before the first fetch resolves WHEN both responses arrive out of order THEN the stale one never overwrites the current event", async () => {
+    // Same class of race useEventDetail(0)-as-placeholder used to hit: the
+    // App Router reuses this hook's mounted instance across a client-side
+    // id change without remounting it, so an in-flight fetch for the old id
+    // can resolve after the new id's fetch. Here id 5's response resolves
+    // deliberately last, after id 7's — the final state must still be 7.
+    let resolveFirst!: (r: Response) => void;
+    const firstResponse = new Promise<Response>((resolve) => {
+      resolveFirst = resolve;
+    });
+    const fetchMock = jest
+      .fn()
+      .mockImplementationOnce(() => firstResponse)
+      .mockImplementationOnce(() => Promise.resolve(eventPayload(7)));
+    global.fetch = fetchMock;
+
+    const { result, rerender } = renderHook(({ id }) => useEventDetail(id), { initialProps: { id: 5 } });
+    rerender({ id: 7 });
+
+    await waitFor(() => expect(result.current.event?.id).toBe(7));
+
+    resolveFirst(eventPayload(5));
+    await new Promise((r) => setTimeout(r, 0));
+
+    expect(result.current.event?.id).toBe(7);
+  });
 });

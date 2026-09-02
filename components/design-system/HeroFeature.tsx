@@ -50,7 +50,7 @@ export function HeroFeature({ event }: HeroFeatureProps) {
         )}
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      <div className="absolute inset-0 hero-scrim" />
 
       <div className="relative z-10 flex min-h-[560px] flex-col justify-end gap-4 px-4 pb-10 pt-24 sm:px-8">
         <div className="flex items-center gap-1.5">

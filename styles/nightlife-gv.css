@@ -56,6 +56,16 @@
 }
 
 /**
+ * Bottom-anchored scrim gradient, shared between HeroFeature and EventHero's
+ * full-bleed photo heroes to avoid duplicating the same gradient recipe
+ * twice. Matches Tailwind's `bg-gradient-to-t from-black/80 via-black/20
+ * to-transparent` visually (via-stop at the midpoint).
+ */
+.hero-scrim {
+  background-image: linear-gradient(to top, rgb(0 0 0 / 0.8), rgb(0 0 0 / 0.2) 50%, transparent);
+}
+
+/**
  * §3 — card entrance animation. `--card-index` isn't specified by the
  * design system itself (no DOM-wiring example given); EventCard sets it via
  * an inline style from its render-loop index, so `animation-delay` staggers

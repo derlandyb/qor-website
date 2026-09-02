@@ -36,7 +36,7 @@ export function EventHero({ event, onBack, onShare, genre }: EventHeroProps) {
         )}
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      <div className="absolute inset-0 hero-scrim" />
 
       <div className="relative z-10 flex items-center justify-between px-4 pt-6 sm:px-8">
         <button type="button" onClick={onBack} aria-label="Voltar" className={ICON_BUTTON_CLASSES}>

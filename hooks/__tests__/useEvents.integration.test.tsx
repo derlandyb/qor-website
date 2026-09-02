@@ -62,4 +62,14 @@ describe("event hooks (integration, real client + http stack)", () => {
     const [url] = fetchMock.mock.calls.at(-1)!;
     expect(String(url)).toContain("/api/v1/events/42");
   });
+
+  test("GIVEN a null id WHEN useEventDetail() mounts THEN it never fetches", async () => {
+    const fetchMock = jest.fn();
+    global.fetch = fetchMock;
+
+    const { result } = renderHook(() => useEventDetail(null));
+
+    expect(result.current.loading).toBe(true);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 });

@@ -59,7 +59,7 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
     };
   }, [params]);
 
-  const { event, loading, error } = useEventDetail(id === null ? 0 : Number(id));
+  const { event, loading, error } = useEventDetail(id === null ? null : Number(id));
 
   async function handleShare() {
     if (!event) return;

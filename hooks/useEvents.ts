@@ -85,12 +85,21 @@ export interface EventDetailState {
   refetch: () => Promise<void>;
 }
 
-export function useEventDetail(id: number): EventDetailState {
+/**
+ * `id` is `null` until the caller has a real one to fetch (e.g. Next.js 16's
+ * async `params` hasn't resolved yet) — skipping the fetch entirely in that
+ * case, rather than substituting a placeholder like `0`, avoids a real race:
+ * a placeholder-id request and the real-id request can resolve out of
+ * order, letting the placeholder's 404 clobber the real event after it
+ * already loaded.
+ */
+export function useEventDetail(id: number | null): EventDetailState {
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const refetch = useCallback(async () => {
+    if (id === null) return;
     setLoading(true);
     setError(null);
     try {
@@ -109,5 +118,5 @@ export function useEventDetail(id: number): EventDetailState {
     void refetch();
   }, [refetch]);
 
-  return { event, loading, error, refetch };
+  return { event, loading: id === null || loading, error, refetch };
 }

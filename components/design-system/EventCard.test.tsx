@@ -6,7 +6,7 @@ const baseProps = {
   flyerUrl: "https://cdn.example.com/flyer.jpg",
   startsAt: "2099-12-31T22:00:00Z",
   status: "published" as const,
-  venueName: "Casa X",
+  location: "Casa X",
   city: "vitoria" as const,
   genre: "Rock",
   mapsUrl: "https://maps.example.com/x",
@@ -27,6 +27,25 @@ describe("EventCard", () => {
       "href",
       baseProps.instagramUrl,
     );
+  });
+
+  test("GIVEN no location WHEN it renders THEN it shows the fallback location text", () => {
+    render(<EventCard {...baseProps} location={null} />);
+
+    expect(screen.getByText("Local a confirmar")).toBeInTheDocument();
+  });
+
+  test("GIVEN no genre WHEN it renders THEN no genre tag is shown", () => {
+    render(<EventCard {...baseProps} genre={undefined} />);
+
+    expect(screen.queryByText("Rock")).not.toBeInTheDocument();
+  });
+
+  test("GIVEN no mapsUrl or instagramUrl WHEN it renders THEN no CTA row is shown", () => {
+    render(<EventCard {...baseProps} mapsUrl={undefined} instagramUrl={undefined} />);
+
+    expect(screen.queryByRole("link", { name: /ver no mapa/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /ver instagram/i })).not.toBeInTheDocument();
   });
 
   test("GIVEN a future published event WHEN it renders THEN it shows the date badge, not the live badge", () => {

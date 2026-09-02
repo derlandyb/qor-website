@@ -113,6 +113,20 @@ export function resendVerification(email: string) {
   });
 }
 
+export function verifyEmailCode(email: string, code: string) {
+  return apiRequest<DataEnvelope<FanUser | null>>("/auth/email/verify-code", {
+    method: "POST",
+    json: { email, code },
+  });
+}
+
+export function verifyPasswordResetCode(email: string, code: string) {
+  return apiRequest<DataEnvelope<{ token: string }>>("/auth/password/verify-code", {
+    method: "POST",
+    json: { email, code },
+  });
+}
+
 // --- Profile ---
 
 export function getProfile() {

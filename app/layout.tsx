@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { NavBar } from "../components/design-system/NavBar";
 
 export const metadata: Metadata = {
   title: "QOR",
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className="h-full antialiased">
-      <body className="min-h-full">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <NavBar />
+        <main className="flex-1">{children}</main>
+      </body>
     </html>
   );
 }

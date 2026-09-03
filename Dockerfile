@@ -4,10 +4,6 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN npm ci
-# Playwright's own Chromium build + OS deps, installed once at image build
-# time so `make e2e-website` (docker compose exec website npx playwright test)
-# never needs a host browser install — see ARCHITECTURE.md §8.1/§8.3.
-RUN npx playwright install --with-deps chromium
 
 COPY . .
 

@@ -18,6 +18,7 @@ export interface Event {
   starts_at: string;
   city: City;
   genre_id: number;
+  genre: string | null;
   address: string | null;
   is_free: boolean;
   ticket_url: string | null;

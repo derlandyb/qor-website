@@ -35,7 +35,7 @@ export interface EventCardProps {
    */
   location: string | null;
   city: City;
-  /** Omitted (no genre tag rendered) when unset — qor-api's Event only has a raw genre_id, no resolvable name, at both list and detail level (no genre-list endpoint yet). */
+  /** Omitted (no genre tag rendered) when unset — qor-api resolves this from Event.genre, which is nullable pre-persistence but always present on real API responses. */
   genre?: string;
   /** Omitted (no button rendered) when unset — not every context has a resolved maps/Instagram URL yet (e.g. the list view, before a promoter/venue lookup). */
   mapsUrl?: string;

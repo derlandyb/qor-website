@@ -57,6 +57,7 @@ function ExploreContent() {
                   status={event.status}
                   location={event.address}
                   city={event.city}
+                  genre={event.genre ?? undefined}
                   index={index}
                 />
               </Link>

@@ -31,12 +31,6 @@ describe("EventHero", () => {
     expect(screen.getByText("Rua das Flores, 123")).toBeInTheDocument();
   });
 
-  test("GIVEN address: null WHEN rendered THEN no address subtitle renders", () => {
-    render(<EventHero event={{ ...baseEvent, address: null }} onBack={noop} onShare={noop} />);
-
-    expect(screen.queryByText("Rua das Flores, 123")).not.toBeInTheDocument();
-  });
-
   test("GIVEN event.genre is set WHEN rendered THEN the genre pill appears", () => {
     render(<EventHero event={baseEvent} onBack={noop} onShare={noop} />);
 

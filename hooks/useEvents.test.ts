@@ -19,7 +19,7 @@ function makeEvent(overrides?: Partial<Event>): Event {
     city: "vitoria" as City,
     genre_id: 1,
     genre: "Rock",
-    address: null,
+    address: "Rua das Flores, 100",
     is_free: true,
     ticket_url: null,
     capacity: null,

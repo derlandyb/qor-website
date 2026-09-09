@@ -30,10 +30,10 @@ export interface EventCardProps {
   /**
    * Rendered in place of design-system.md's `{venue_name}` — qor-api's
    * public Event/EventDetail JSON has no venue-name field at all (only
-   * `address`), so this shows the address text instead. Optional since the
-   * list endpoint's `address` can be null.
+   * `address`), so this shows the address text instead. `address` is
+   * always present on the wire (qor-api guarantees a non-null value).
    */
-  location: string | null;
+  location: string;
   city: City;
   /**
    * Optional at the component level since EventCard is a general display
@@ -125,7 +125,7 @@ export function EventCard({
 
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
-            <span className="font-semibold text-[15px] text-[#F5F6FA]">{location ?? "Local a confirmar"}</span>
+            <span className="font-semibold text-[15px] text-[#F5F6FA]">{location}</span>
             <span className="text-[13px] text-[#9A9FB0]">
               {time}, {dayOfWeek}
             </span>

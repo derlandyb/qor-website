@@ -84,7 +84,7 @@ export function EventHero({ event, onBack, onShare }: EventHeroProps) {
           {event.title}
         </h1>
 
-        {event.address && <p className="text-[15px] text-[#9A9FB0]">{event.address}</p>}
+        <p className="text-[15px] text-[#9A9FB0]">{event.address}</p>
       </div>
     </section>
   );

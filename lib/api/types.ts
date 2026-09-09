@@ -19,7 +19,7 @@ export interface Event {
   city: City;
   genre_id: number;
   genre: string;
-  address: string | null;
+  address: string;
   is_free: boolean;
   ticket_url: string | null;
   capacity: number | null;

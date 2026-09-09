@@ -45,15 +45,6 @@ describe("components/design-system/HeroFeature.tsx", () => {
     expect(screen.getByRole("link", { name: /ver detalhes/i })).toBeInTheDocument();
   });
 
-  test("GIVEN an event with address: null WHEN rendered THEN the Ver no mapa link is absent and no address subtitle line is rendered", () => {
-    const event = makeEvent({ address: null });
-
-    render(<HeroFeature event={event} />);
-
-    expect(screen.queryByRole("link", { name: /ver no mapa/i })).not.toBeInTheDocument();
-    expect(screen.queryByText("Rua X, 100")).not.toBeInTheDocument();
-  });
-
   test("GIVEN is_free: true WHEN rendered THEN the meta chip shows Gratuito", () => {
     const event = makeEvent({ is_free: true });
 

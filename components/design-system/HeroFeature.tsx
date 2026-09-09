@@ -70,7 +70,7 @@ export function HeroFeature({ event }: HeroFeatureProps) {
           {event.title}
         </h1>
 
-        {event.address && <p className="text-[15px] text-[#9A9FB0]">{event.address}</p>}
+        <p className="text-[15px] text-[#9A9FB0]">{event.address}</p>
 
         <div className="flex flex-wrap gap-4 text-[13px] text-[#9A9FB0]">
           <span>{startsAtDate.toLocaleDateString("pt-BR", { dateStyle: "long" })}</span>
@@ -85,14 +85,12 @@ export function HeroFeature({ event }: HeroFeatureProps) {
           >
             Ver detalhes
           </Link>
-          {event.address && (
-            <Link
-              href={`/eventos/${event.id}#map`}
-              className="rounded-[12px] border border-[#2A2E3B] px-6 py-3 font-[Space_Grotesk] text-[14px] font-semibold tracking-[0.01em] text-[#F5F6FA] hover:bg-white/5"
-            >
-              Ver no mapa
-            </Link>
-          )}
+          <Link
+            href={`/eventos/${event.id}#map`}
+            className="rounded-[12px] border border-[#2A2E3B] px-6 py-3 font-[Space_Grotesk] text-[14px] font-semibold tracking-[0.01em] text-[#F5F6FA] hover:bg-white/5"
+          >
+            Ver no mapa
+          </Link>
         </div>
       </div>
     </section>

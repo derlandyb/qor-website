@@ -147,12 +147,10 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
         <div className="flex flex-col gap-3 lg:col-span-2">
           <p className="text-[14px] text-[#F5F6FA]">{event.description}</p>
 
-          {event.address && (
-            <div id="map" className="flex flex-col gap-2">
-              <p className="text-[13px] text-[#9A9FB0]">{event.address}</p>
-              <GoogleMap address={event.address} />
-            </div>
-          )}
+          <div id="map" className="flex flex-col gap-2">
+            <p className="text-[13px] text-[#9A9FB0]">{event.address}</p>
+            <GoogleMap address={event.address} />
+          </div>
 
           {event.tagged_promoters.length > 0 && (
             <div className="flex flex-col gap-2">

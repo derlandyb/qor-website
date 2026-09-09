@@ -2,11 +2,16 @@
 
 /**
  * W22 — profile, scoped to basic fields only (AUTH-17-19, AUTH-25; Stitch
- * screen ee5dea95cc384522b7705c2eb44ac552's social sections — stats,
- * agenda, recommendations — are deliberately NOT replicated here, per this
- * task's own scope note; that's Milestone 2's W35). birthdate is
+ * screen 16664796a74641fbaf441e7a7189dc12, "Meu Perfil (Desktop)"). The
+ * mock's social sections — stats, favorite genres, followed venues, saved
+ * events, sidebar nav — are deliberately NOT replicated here, per this
+ * task's own scope note; that's Milestone 2's W35. birthdate is
  * display-only — updateProfile's payload doesn't accept it (name/phone/
  * email only), matching what qor-api's ProfileController actually allows.
+ * Wrapped in the same centered bordered card used by the other refreshed
+ * auth-adjacent pages; the account-management heading is renamed to match
+ * the mock's "Segurança & Configurações da Conta" wording for the fields
+ * it actually covers (export/delete).
  */
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -115,7 +120,11 @@ export default function ProfilePage() {
   const pendingEmail = "pending_email" in profile ? profile.pending_email : null;
 
   return (
-    <div className="mx-auto flex max-w-md flex-col gap-6 p-4">
+    <div
+      role="region"
+      aria-label="Meu perfil"
+      className="mx-auto flex max-w-md flex-col gap-6 rounded-[16px] border border-[#2A2E3B] bg-[#1B1E29] p-6 md:my-8"
+    >
       <h1 className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">Meu Perfil</h1>
 
       {formError && (
@@ -158,7 +167,9 @@ export default function ProfilePage() {
       </form>
 
       <div className="flex flex-col gap-2 border-t border-[#2A2E3B] pt-4">
-        <h2 className="text-[15px] font-semibold text-[#F5F6FA]">Seus dados</h2>
+        <h2 className="text-[15px] font-semibold text-[#F5F6FA]">
+          Segurança &amp; Configurações da Conta
+        </h2>
         <button
           type="button"
           onClick={() => void handleExport()}

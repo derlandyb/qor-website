@@ -108,4 +108,40 @@ describe("app/perfil/page.tsx (profile, integration)", () => {
 
     await screen.findByText("Erro interno.");
   });
+
+  test("GIVEN a loaded profile WHEN it renders THEN it structurally matches the Stitch centered-card layout and account-section heading (REFRESH-01)", async () => {
+    global.fetch = jest.fn().mockResolvedValue(jsonResponse({ data: profile }));
+
+    render(<ProfilePage />);
+
+    expect(await screen.findByRole("region", { name: "Meu perfil" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Segurança & Configurações da Conta" }),
+    ).toBeInTheDocument();
+  });
+
+  test("GIVEN a loaded profile WHEN it renders THEN it uses no hardcoded colors outside the reconciled token set (REFRESH-02)", async () => {
+    global.fetch = jest.fn().mockResolvedValue(jsonResponse({ data: profile }));
+
+    const { container } = render(<ProfilePage />);
+    await screen.findByRole("region", { name: "Meu perfil" });
+
+    const allowedHexes = [
+      "#F5F6FA",
+      "#9A9FB0",
+      "#666B7D",
+      "#2A2E3B",
+      "#1B1E29",
+      "#12141D",
+      "#0B0D14",
+      "#FF2E7E",
+      "#FFAB00",
+      "#2EC5FF",
+      "#FF4D4D",
+    ];
+    const hexMatches = container.innerHTML.match(/#[0-9A-Fa-f]{6}/g) ?? [];
+    for (const hex of hexMatches) {
+      expect(allowedHexes.map((h) => h.toUpperCase())).toContain(hex.toUpperCase());
+    }
+  });
 });

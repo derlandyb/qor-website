@@ -1,10 +1,12 @@
 "use client";
 
 /**
- * W19 — signup (AUTH-01-05; Stitch screen d4965c8bc3a740158366d6a9a45ed459).
- * On success, redirects to /verificar-email with the email as a query
- * param — the account starts unverified and needs the OTP code qor-api
- * just emailed (W20).
+ * W19 — signup (AUTH-01-05; Stitch screen fb2c16cf77f64f0687ce3fe03f990ca8,
+ * "Criar Conta (Registro Desktop)"). On success, redirects to
+ * /verificar-email with the email as a query param — the account starts
+ * unverified and needs the OTP code qor-api just emailed (W20). Split-screen
+ * layout matches the mock's branding-panel + form-panel structure, same
+ * pattern as /entrar (REFRESH-04: rebuilt idiomatically, not copy-pasted).
  */
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -68,21 +70,45 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-md flex-col gap-6 p-4">
-      <div>
-        <h1 className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">Criar conta</h1>
-        <p className="mt-1 text-[13px] text-[#9A9FB0]">
-          Junte-se à comunidade e não perca nenhum rolê.
-        </p>
-      </div>
+    <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 p-4 md:grid-cols-2 md:items-center md:gap-12 md:p-8">
+      <section
+        aria-label="Destaque"
+        className="hidden flex-col justify-between gap-6 rounded-[16px] border border-[#2A2E3B] bg-[#1B1E29] p-6 md:flex"
+      >
+        <div>
+          <p className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">
+            Qual o Rock?
+          </p>
+          <p className="mt-2 text-[13px] text-[#9A9FB0]">
+            Junte-se à comunidade e não perca nenhum rolê na Grande Vitória.
+          </p>
+        </div>
+        <div className="rounded-[12px] border border-[#2A2E3B] bg-[#12141D] p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.01em] text-[#FF2E7E]">
+            Comunidade
+          </p>
+          <p className="mt-1 text-[15px] font-semibold text-[#F5F6FA]">Cena GV</p>
+          <p className="mt-1 text-[13px] text-[#9A9FB0]">+14k roqueiros conectados</p>
+        </div>
+      </section>
 
-      {error && (
-        <p role="alert" className="text-sm text-[#FF4D4D]">
-          {error}
-        </p>
-      )}
+      <section aria-label="Formulário de cadastro" className="flex flex-col gap-6">
+        <div>
+          <h1 className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">
+            Criar conta
+          </h1>
+          <p className="mt-1 text-[13px] text-[#9A9FB0]">
+            Junte-se à comunidade e não perca nenhum rolê.
+          </p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+        {error && (
+          <p role="alert" className="text-sm text-[#FF4D4D]">
+            {error}
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
         <TextField id="signup-name" label="Nome" value={name} error={fieldErrors.name} onChange={(e) => setName(e.target.value)} />
         <TextField id="signup-email" label="E-mail" type="email" value={email} error={fieldErrors.email} onChange={(e) => setEmail(e.target.value)} />
         <TextField id="signup-phone" label="Telefone (opcional)" value={phone} onChange={(e) => setPhone(e.target.value)} />
@@ -117,14 +143,15 @@ export default function SignupPage() {
           error={fieldErrors.terms}
         />
         <Button type="submit">Criar minha conta</Button>
-      </form>
+        </form>
 
-      <p className="text-center text-[13px] text-[#9A9FB0]">
-        Já tem uma conta?{" "}
-        <Link href="/entrar" className="underline">
-          Entrar
-        </Link>
-      </p>
+        <p className="text-center text-[13px] text-[#9A9FB0]">
+          Já tem uma conta?{" "}
+          <Link href="/entrar" className="underline">
+            Entrar
+          </Link>
+        </p>
+      </section>
     </div>
   );
 }

@@ -108,4 +108,32 @@ describe("app/cadastro/page.tsx (signup, integration)", () => {
     await screen.findByText("Este e-mail já está cadastrado");
     expect(pushMock).not.toHaveBeenCalled();
   });
+
+  test("GIVEN the page renders THEN it structurally matches the Stitch split-screen layout (REFRESH-01)", () => {
+    render(<SignupPage />);
+
+    expect(screen.getByRole("region", { name: "Destaque" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Formulário de cadastro" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Criar conta" })).toBeInTheDocument();
+  });
+
+  test("GIVEN the page renders THEN it uses no hardcoded colors outside the reconciled token set (REFRESH-02)", () => {
+    const { container } = render(<SignupPage />);
+    const allowedHexes = [
+      "#F5F6FA",
+      "#9A9FB0",
+      "#666B7D",
+      "#2A2E3B",
+      "#1B1E29",
+      "#12141D",
+      "#FF2E7E",
+      "#FF4D4D",
+      "#2EC5FF",
+      "#0B0D14",
+    ];
+    const hexMatches = container.innerHTML.match(/#[0-9A-Fa-f]{6}/g) ?? [];
+    for (const hex of hexMatches) {
+      expect(allowedHexes.map((h) => h.toUpperCase())).toContain(hex.toUpperCase());
+    }
+  });
 });

@@ -36,6 +36,21 @@ export function getEvent(id: number) {
   return apiRequest<DataEnvelope<EventDetail>>(`/events/${id}`);
 }
 
+// --- Favorites ---
+
+export function getFavorites(cursor?: string) {
+  return apiRequest<CursorPage<Event>>("/profile/favorites", { query: { cursor } });
+}
+
+export interface ToggleFavoriteResult {
+  event_id: number;
+  favorited: boolean;
+}
+
+export function toggleFavorite(id: number) {
+  return apiRequest<DataEnvelope<ToggleFavoriteResult>>(`/events/${id}/favorite`, { method: "POST" });
+}
+
 // --- Auth ---
 
 export interface RegisterPayload {

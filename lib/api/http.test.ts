@@ -103,6 +103,18 @@ describe("apiRequest", () => {
     },
   );
 
+  test("GIVEN a 401 response on /favoritos WHEN the request fails THEN it redirects to /entrar (FAVUI-03)", async () => {
+    Object.defineProperty(window, "location", {
+      value: { ...window.location, href: "http://localhost:3002/favoritos", pathname: "/favoritos" },
+      writable: true,
+    });
+    const fetchMock = fetch as jest.Mock;
+    fetchMock.mockResolvedValueOnce(jsonResponse({ message: "Não autenticado." }, 401));
+
+    await expect(apiRequest("/profile/favorites")).rejects.toBeInstanceOf(UnauthenticatedError);
+    expect(window.location.href).toContain(LOGIN_PATH);
+  });
+
   test("GIVEN any other error status WHEN the request fails THEN it throws a plain ApiError, not UnauthenticatedError", async () => {
     const fetchMock = fetch as jest.Mock;
     fetchMock.mockResolvedValueOnce(jsonResponse({ message: "Você não tem permissão para esta ação." }, 403));

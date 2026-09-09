@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -73,7 +73,8 @@ export function GoogleMap(props: GoogleMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
   const isMultiPin = props.pins !== undefined;
-  const pins = props.pins ?? [];
+  const propsPins = props.pins;
+  const pins = useMemo(() => propsPins ?? [], [propsPins]);
   const address = props.address;
   const onPinClick = isMultiPin ? props.onPinClick : undefined;
   const onBoundsChanged = isMultiPin ? props.onBoundsChanged : undefined;
@@ -128,6 +129,8 @@ export function GoogleMap(props: GoogleMapProps) {
           return;
         }
 
+        if (address === undefined) return;
+
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode({ address }, (results, status) => {
           if (!active) return;
@@ -150,7 +153,6 @@ export function GoogleMap(props: GoogleMapProps) {
     return () => {
       active = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, isMultiPin, pins, onPinClick, onBoundsChanged]);
 
   if (failed) {

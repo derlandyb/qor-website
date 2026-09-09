@@ -12,12 +12,14 @@
  * rebuilt here; only the structure/spacing of the existing
  * HeroFeature/Marquee/EventCarousel/CityGrid composition is refreshed.
  */
+import Link from "next/link";
 import { EmptyState } from "../components/design-system/EmptyState";
 import { HeroFeature } from "../components/design-system/HeroFeature";
 import { Marquee } from "../components/design-system/Marquee";
 import { EventCarousel } from "../components/design-system/EventCarousel";
 import { CityGrid } from "../components/design-system/CityGrid";
 import { useEventList } from "../hooks/useEvents";
+import { CITY_VALUES, CITY_LABELS } from "../lib/enums/city";
 
 const MARQUEE_ITEMS = [
   "Vitória · A cena começa aqui",
@@ -64,6 +66,28 @@ export default function HomePage() {
               Explore por cidade
             </h2>
             <CityGrid />
+          </section>
+
+          {/*
+           * T23/HUB-02 — an additional entry point alongside CityGrid's own
+           * /eventos?city= link, not a replacement for it (Hubs vs. Explore
+           * confirmed additive in design.md's Tech Decisions table).
+           */}
+          <section className="flex flex-col gap-3 px-4">
+            <h2 className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">
+              Hubs da Grande Vitória
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {CITY_VALUES.map((city) => (
+                <Link
+                  key={city}
+                  href={`/hubs/${city}`}
+                  className="rounded-full border border-[#2A2E3B] px-4 py-2 text-[13px] font-semibold text-[#F5F6FA] transition-colors duration-250 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-white/5"
+                >
+                  Hub de {CITY_LABELS[city]}
+                </Link>
+              ))}
+            </div>
           </section>
         </>
       )}

@@ -52,6 +52,24 @@ describe("app/page.tsx (home feed, integration)", () => {
     expect(screen.getByRole("link", { name: "Vitória" })).toBeInTheDocument();
   });
 
+  test("GIVEN events WHEN the page mounts THEN it offers a Hub entry point per city alongside CityGrid's own link (HUB-02)", async () => {
+    global.fetch = jest.fn().mockResolvedValue(
+      jsonResponse({ data: [baseEvent({ id: 1, title: "Show A" })], next_cursor: null }),
+    );
+
+    render(<HomePage />);
+
+    await waitFor(() =>
+      expect(screen.getByRole("heading", { level: 1, name: "Show A" })).toBeInTheDocument(),
+    );
+    // CityGrid's existing link stays /eventos?city=... — the Hub link is additive, not a replacement.
+    expect(screen.getByRole("link", { name: "Vitória" })).toHaveAttribute("href", "/eventos?city=vitoria");
+    expect(screen.getByRole("link", { name: "Hub de Vitória" })).toHaveAttribute("href", "/hubs/vitoria");
+    expect(screen.getByRole("link", { name: "Hub de Vila Velha" })).toHaveAttribute("href", "/hubs/vila_velha");
+    expect(screen.getByRole("link", { name: "Hub de Serra" })).toHaveAttribute("href", "/hubs/serra");
+    expect(screen.getByRole("link", { name: "Hub de Cariacica" })).toHaveAttribute("href", "/hubs/cariacica");
+  });
+
   test("GIVEN events WHEN the page mounts THEN useEventList is called without a city filter", async () => {
     const fetchMock = jest.fn().mockResolvedValue(
       jsonResponse({ data: [baseEvent({ id: 1, title: "Show A" })], next_cursor: null }),

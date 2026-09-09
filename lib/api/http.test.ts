@@ -84,7 +84,7 @@ describe("apiRequest", () => {
     expect(window.location.href).toContain(LOGIN_PATH);
   });
 
-  test.each(["/", "/entrar", "/cadastro", "/eventos", "/eventos/42"])(
+  test.each(["/", "/entrar", "/cadastro", "/eventos", "/eventos/42", "/mapa", "/hubs/vitoria"])(
     "GIVEN a 401 response on the public route %s WHEN the request fails THEN it still throws UnauthenticatedError but does NOT redirect",
     async (publicPath) => {
       Object.defineProperty(window, "location", {

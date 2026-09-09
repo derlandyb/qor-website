@@ -73,14 +73,17 @@ export const LOGIN_PATH = "/entrar";
 
 /**
  * Routes reachable with no fan account at all — event discovery (home,
- * explore, event detail) is unauthenticated per PROJECT.md ("a fan can
- * discover and favorite events without login"), plus every auth-flow page.
- * A 401 from a background session check on any of these is the expected,
- * normal state, never something to bounce away from. `/eventos` is matched
- * by prefix since it also covers the `/eventos/[id]` detail route.
- * Single source of truth — a future root layout imports this instead of
- * re-declaring its own list. `/favoritos` is deliberately NOT listed here —
- * per nightlife-gv-stitch-refresh's FAVUI-03, an unauthenticated visitor
+ * explore, event detail, map, hubs) is unauthenticated per PROJECT.md ("a
+ * fan can discover and favorite events without login"), plus every
+ * auth-flow page. A 401 from a background session check on any of these
+ * (e.g. NavBar's session lookup) is the expected, normal state, never
+ * something to bounce away from. `/eventos` and `/hubs` are matched by
+ * prefix since they also cover their `/eventos/[id]` and `/hubs/[city]`
+ * detail routes. `/mapa` (T22/MAPUI) is public for the same reason `/eventos`
+ * is — it's a browsing surface, not an account feature. Single source of
+ * truth — a future root layout imports this instead of re-declaring its
+ * own list. `/favoritos` is deliberately NOT listed here — per
+ * nightlife-gv-stitch-refresh's FAVUI-03, an unauthenticated visitor
  * reaching it must redirect to `/entrar`. TODO(Milestone 2, W31):
  * favorites-social's own spec calls for anonymous browsing there too (only
  * the favorite-toggle action itself needs auth) — revisit then, don't let
@@ -93,8 +96,9 @@ export const PUBLIC_PATHS = [
   "/verificar-email",
   "/recuperar-senha",
   "/recuperar-senha/sucesso",
+  "/mapa",
 ];
-export const PUBLIC_PATH_PREFIXES = ["/eventos"];
+export const PUBLIC_PATH_PREFIXES = ["/eventos", "/hubs"];
 
 function isPublicPath(pathname: string): boolean {
   return (

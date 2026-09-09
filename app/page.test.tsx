@@ -21,6 +21,7 @@ function baseEvent(overrides: Record<string, unknown>): Record<string, unknown> 
     starts_at: "2099-12-31T22:00:00Z",
     city: "vitoria",
     genre_id: 1,
+    genre: "Rock",
     address: "Rua A, 100",
     is_free: true,
     ticket_url: null,

@@ -30,12 +30,17 @@ export interface EventCardProps {
   /**
    * Rendered in place of design-system.md's `{venue_name}` — qor-api's
    * public Event/EventDetail JSON has no venue-name field at all (only
-   * `address`), so this shows the address text instead. Optional since the
-   * list endpoint's `address` can be null.
+   * `address`), so this shows the address text instead. `address` is
+   * always present on the wire (qor-api guarantees a non-null value).
    */
-  location: string | null;
+  location: string;
   city: City;
-  /** Omitted (no genre tag rendered) when unset — qor-api's Event only has a raw genre_id, no resolvable name, at both list and detail level (no genre-list endpoint yet). */
+  /**
+   * Optional at the component level since EventCard is a general display
+   * primitive, not tied to Event — every current caller passes Event.genre
+   * (always a non-null string on the wire), so in practice the tag always
+   * renders; the guard stays as defense-in-depth for other future callers.
+   */
   genre?: string;
   /** Omitted (no button rendered) when unset — not every context has a resolved maps/Instagram URL yet (e.g. the list view, before a promoter/venue lookup). */
   mapsUrl?: string;
@@ -120,7 +125,7 @@ export function EventCard({
 
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
-            <span className="font-semibold text-[15px] text-[#F5F6FA]">{location ?? "Local a confirmar"}</span>
+            <span className="font-semibold text-[15px] text-[#F5F6FA]">{location}</span>
             <span className="text-[13px] text-[#9A9FB0]">
               {time}, {dayOfWeek}
             </span>

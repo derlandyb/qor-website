@@ -11,6 +11,7 @@ const baseEvent: Event = {
   starts_at: "2099-12-31T22:00:00Z",
   city: "vitoria",
   genre_id: 1,
+  genre: "Rock",
   address: "Rua das Flores, 123",
   is_free: false,
   ticket_url: null,
@@ -30,22 +31,10 @@ describe("EventHero", () => {
     expect(screen.getByText("Rua das Flores, 123")).toBeInTheDocument();
   });
 
-  test("GIVEN address: null WHEN rendered THEN no address subtitle renders", () => {
-    render(<EventHero event={{ ...baseEvent, address: null }} onBack={noop} onShare={noop} />);
-
-    expect(screen.queryByText("Rua das Flores, 123")).not.toBeInTheDocument();
-  });
-
-  test("GIVEN a genre prop WHEN rendered THEN the genre pill appears", () => {
-    render(<EventHero event={baseEvent} onBack={noop} onShare={noop} genre="Rock" />);
-
-    expect(screen.getByText("Rock")).toBeInTheDocument();
-  });
-
-  test("GIVEN no genre prop WHEN rendered THEN no genre pill appears", () => {
+  test("GIVEN event.genre is set WHEN rendered THEN the genre pill appears", () => {
     render(<EventHero event={baseEvent} onBack={noop} onShare={noop} />);
 
-    expect(screen.queryByText("Rock")).not.toBeInTheDocument();
+    expect(screen.getByText("Rock")).toBeInTheDocument();
   });
 
   test("GIVEN the back button WHEN clicked THEN onBack is called", async () => {

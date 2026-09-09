@@ -10,8 +10,6 @@ export interface EventHeroProps {
   onBack: () => void;
   /** Called when the share icon button is clicked — caller (Task 9) wires the page's existing shareEvent() logic. */
   onShare: () => void;
-  /** Omitted (no genre pill rendered) when unset — qor-api's Event only has a raw genre_id, no resolvable name yet (no genre-list endpoint). */
-  genre?: string;
 }
 
 /**
@@ -20,7 +18,8 @@ export interface EventHeroProps {
  * component only renders what it's given and delegates its actions via
  * props; wiring into the page happens in Task 9.
  */
-export function EventHero({ event, onBack, onShare, genre }: EventHeroProps) {
+export function EventHero({ event, onBack, onShare }: EventHeroProps) {
+  const genre = event.genre;
   return (
     <section className="relative w-full min-h-[480px] overflow-hidden">
       <div className="absolute inset-0">
@@ -85,7 +84,7 @@ export function EventHero({ event, onBack, onShare, genre }: EventHeroProps) {
           {event.title}
         </h1>
 
-        {event.address && <p className="text-[15px] text-[#9A9FB0]">{event.address}</p>}
+        <p className="text-[15px] text-[#9A9FB0]">{event.address}</p>
       </div>
     </section>
   );

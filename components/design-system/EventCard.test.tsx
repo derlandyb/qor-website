@@ -29,12 +29,6 @@ describe("EventCard", () => {
     );
   });
 
-  test("GIVEN no location WHEN it renders THEN it shows the fallback location text", () => {
-    render(<EventCard {...baseProps} location={null} />);
-
-    expect(screen.getByText("Local a confirmar")).toBeInTheDocument();
-  });
-
   test("GIVEN no genre WHEN it renders THEN no genre tag is shown", () => {
     render(<EventCard {...baseProps} genre={undefined} />);
 

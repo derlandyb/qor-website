@@ -12,6 +12,7 @@ function makeEvent(overrides: Partial<Event> = {}): Event {
     starts_at: "2026-10-10T22:00:00Z",
     city: "vitoria",
     genre_id: 1,
+    genre: "Rock",
     address: "Rua X, 100",
     is_free: false,
     ticket_url: null,

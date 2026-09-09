@@ -1,14 +1,14 @@
 "use client";
 
 /**
- * W18 — login (AUTH-06-12; Stitch screen cfa5690fed3d487897d65de249ad7f1d).
- * The Stitch mock shows only a "Continuar com Email" entry-point button
- * (no visible fields) plus Google/guest/forgot-password — but AUTH-06-12
- * requires a real email+password form, so that's built directly rather
- * than following the mock literally. Google sign-in needs its own OAuth
- * client-id setup (like the Maps key, but with redirect-URI/consent-screen
- * configuration too) that hasn't been provided — shown disabled with a
- * pt-BR note rather than half-wired.
+ * W18 — login (AUTH-06-12; Stitch screen 4b1dcb1f579f4e528eeedf83f31973e3,
+ * "Entrar (Login Desktop)"). AUTH-06-12 requires a real email+password form
+ * (the mock's fields are rebuilt idiomatically, not copy-pasted — REFRESH-04),
+ * split-screen per the mock: a left branding/highlight panel and a right
+ * form panel. Google sign-in needs its own OAuth client-id setup (like the
+ * Maps key, but with redirect-URI/consent-screen configuration too) that
+ * hasn't been provided — shown disabled with a pt-BR note rather than
+ * half-wired.
  */
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -49,65 +49,96 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-md flex-col gap-6 p-4">
-      <div>
-        <h1 className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">Entrar</h1>
-        <p className="mt-1 text-[13px] text-[#9A9FB0]">
-          Encontre seu próximo rolê na Grande Vitória.
-        </p>
-      </div>
-
-      {error && (
-        <p role="alert" className="text-sm text-[#FF4D4D]">
-          {error}
-          {needsVerification && (
-            <>
-              {" "}
-              <Link href="/verificar-email" className="underline">
-                Verificar e-mail
-              </Link>
-            </>
-          )}
-        </p>
-      )}
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-        <TextField
-          id="login-email"
-          label="E-mail"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          id="login-password"
-          label="Senha"
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button type="submit">Entrar</Button>
-      </form>
-
-      <button
-        type="button"
-        disabled
-        title="Login com Google em breve"
-        className="w-full rounded-[12px] border border-[#2A2E3B] px-4 py-2.5 text-[14px] font-semibold text-[#666B7D]"
+    <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 p-4 md:grid-cols-2 md:items-center md:gap-12 md:p-8">
+      <section
+        aria-label="Destaque"
+        className="hidden flex-col justify-between gap-6 rounded-[16px] border border-[#2A2E3B] bg-[#1B1E29] p-6 md:flex"
       >
-        Continuar com Google
-      </button>
+        <div>
+          <p className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">
+            Qual o Rock?
+          </p>
+          <p className="mt-2 text-[13px] text-[#9A9FB0]">
+            Descubra o próximo rolê na Grande Vitória — Vitória, Vila Velha, Serra e Cariacica.
+          </p>
+        </div>
+        <div className="rounded-[12px] border border-[#2A2E3B] bg-[#12141D] p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.01em] text-[#FF2E7E]">
+            Ao vivo agora
+          </p>
+          <p className="mt-1 text-[15px] font-semibold text-[#F5F6FA]">Cena GV</p>
+          <p className="mt-1 text-[13px] text-[#9A9FB0]">+14k roqueiros conectados</p>
+        </div>
+      </section>
 
-      <div className="flex flex-col items-center gap-2 text-[13px] text-[#9A9FB0]">
-        <Link href="/recuperar-senha" className="underline">
-          Esqueci minha senha
-        </Link>
-        <Link href="/cadastro" className="underline">
-          Criar conta
-        </Link>
-      </div>
+      <section aria-label="Formulário de login" className="flex flex-col gap-6">
+        <div>
+          <h1 className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">
+            Entrar na sua conta
+          </h1>
+          <p className="mt-1 text-[13px] text-[#9A9FB0]">
+            Encontre seu próximo rolê na Grande Vitória.
+          </p>
+        </div>
+
+        {error && (
+          <p role="alert" className="text-sm text-[#FF4D4D]">
+            {error}
+            {needsVerification && (
+              <>
+                {" "}
+                <Link href="/verificar-email" className="underline">
+                  Verificar e-mail
+                </Link>
+              </>
+            )}
+          </p>
+        )}
+
+        <button
+          type="button"
+          disabled
+          title="Login com Google em breve"
+          className="w-full rounded-[12px] border border-[#2A2E3B] px-4 py-2.5 text-[14px] font-semibold text-[#666B7D]"
+        >
+          Continuar com Google
+        </button>
+
+        <div className="flex items-center gap-3 text-[13px] text-[#666B7D]" aria-hidden="true">
+          <span className="h-px flex-1 bg-[#2A2E3B]" />
+          OU
+          <span className="h-px flex-1 bg-[#2A2E3B]" />
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+          <TextField
+            id="login-email"
+            label="E-mail"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            id="login-password"
+            label="Senha"
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button type="submit">Entrar</Button>
+        </form>
+
+        <div className="flex flex-col items-center gap-2 text-[13px] text-[#9A9FB0]">
+          <Link href="/recuperar-senha" className="underline">
+            Esqueci minha senha
+          </Link>
+          <Link href="/cadastro" className="underline">
+            Criar conta
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

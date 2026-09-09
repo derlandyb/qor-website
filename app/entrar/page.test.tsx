@@ -91,4 +91,33 @@ describe("app/entrar/page.tsx (login, integration)", () => {
       "/verificar-email",
     );
   });
+
+  test("GIVEN the page renders THEN it structurally matches the Stitch split-screen layout (REFRESH-01)", () => {
+    render(<LoginPage />);
+
+    expect(screen.getByRole("region", { name: "Destaque" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Formulário de login" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Entrar na sua conta" })).toBeInTheDocument();
+  });
+
+  test("GIVEN the page renders THEN it uses no hardcoded colors outside the reconciled token set (REFRESH-02)", () => {
+    const { container } = render(<LoginPage />);
+    const allowedHexes = [
+      "#F5F6FA",
+      "#9A9FB0",
+      "#666B7D",
+      "#2A2E3B",
+      "#1B1E29",
+      "#12141D",
+      "#FF2E7E",
+      "#FF4D4D",
+      "#2EC5FF",
+      "#0B0D14",
+    ];
+    const html = container.innerHTML;
+    const hexMatches = html.match(/#[0-9A-Fa-f]{6}/g) ?? [];
+    for (const hex of hexMatches) {
+      expect(allowedHexes.map((h) => h.toUpperCase())).toContain(hex.toUpperCase());
+    }
+  });
 });

@@ -43,12 +43,6 @@ describe("EventHero", () => {
     expect(screen.getByText("Rock")).toBeInTheDocument();
   });
 
-  test("GIVEN event.genre: null WHEN rendered THEN no genre pill appears", () => {
-    render(<EventHero event={{ ...baseEvent, genre: null }} onBack={noop} onShare={noop} />);
-
-    expect(screen.queryByText("Rock")).not.toBeInTheDocument();
-  });
-
   test("GIVEN the back button WHEN clicked THEN onBack is called", async () => {
     const onBack = jest.fn();
     const user = userEvent.setup();

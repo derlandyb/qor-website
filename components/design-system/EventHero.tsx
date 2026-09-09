@@ -19,7 +19,7 @@ export interface EventHeroProps {
  * props; wiring into the page happens in Task 9.
  */
 export function EventHero({ event, onBack, onShare }: EventHeroProps) {
-  const genre = event.genre ?? undefined;
+  const genre = event.genre;
   return (
     <section className="relative w-full min-h-[480px] overflow-hidden">
       <div className="absolute inset-0">

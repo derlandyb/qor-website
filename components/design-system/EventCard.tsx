@@ -35,7 +35,12 @@ export interface EventCardProps {
    */
   location: string | null;
   city: City;
-  /** Omitted (no genre tag rendered) when unset — qor-api resolves this from Event.genre, which is nullable pre-persistence but always present on real API responses. */
+  /**
+   * Optional at the component level since EventCard is a general display
+   * primitive, not tied to Event — every current caller passes Event.genre
+   * (always a non-null string on the wire), so in practice the tag always
+   * renders; the guard stays as defense-in-depth for other future callers.
+   */
   genre?: string;
   /** Omitted (no button rendered) when unset — not every context has a resolved maps/Instagram URL yet (e.g. the list view, before a promoter/venue lookup). */
   mapsUrl?: string;

@@ -68,4 +68,32 @@ describe("app/verificar-email/page.tsx (integration)", () => {
     // isn't clickable yet — this test just confirms the countdown copy shows.
     expect(await screen.findByText(/reenviar em 60s/i)).toBeInTheDocument();
   });
+
+  test("GIVEN the page renders THEN it structurally matches the Stitch centered-card layout (REFRESH-01) and shows the destination email", async () => {
+    render(<VerifyEmailPage />);
+
+    expect(await screen.findByRole("region", { name: "Verificação de e-mail" })).toBeInTheDocument();
+    expect(screen.getByText("ana@example.com")).toBeInTheDocument();
+  });
+
+  test("GIVEN the page renders THEN it uses no hardcoded colors outside the reconciled token set (REFRESH-02)", async () => {
+    const { container } = render(<VerifyEmailPage />);
+    await screen.findByRole("region", { name: "Verificação de e-mail" });
+    const allowedHexes = [
+      "#F5F6FA",
+      "#9A9FB0",
+      "#666B7D",
+      "#2A2E3B",
+      "#1B1E29",
+      "#12141D",
+      "#FF2E7E",
+      "#FF4D4D",
+      "#2EC5FF",
+      "#0B0D14",
+    ];
+    const hexMatches = container.innerHTML.match(/#[0-9A-Fa-f]{6}/g) ?? [];
+    for (const hex of hexMatches) {
+      expect(allowedHexes.map((h) => h.toUpperCase())).toContain(hex.toUpperCase());
+    }
+  });
 });

@@ -2,10 +2,14 @@
 
 /**
  * W20 — email verification (AUTH-10; Stitch screen
- * 31a89c6e38cd4136998d650e9d778f73). qor-api's actual mechanism is an OTP
- * code (not the signed link the old spec assumed) — matches the Stitch
- * mock exactly. Reached by app navigation right after signup (email query
- * param), not by clicking a link in the email itself.
+ * 47a8c72451fd44509ae4576bcf2134e4, "Verificação de E-mail OTP (Desktop)").
+ * qor-api's actual mechanism is an OTP code (not the signed link the old
+ * spec assumed) — matches the Stitch mock exactly. Reached by app
+ * navigation right after signup (email query param), not by clicking a
+ * link in the email itself. Restyled to the mock's single centered card
+ * (already the page's layout shape — reused `OtpCodeInput`'s built-in
+ * resend UI rather than copying the mock's countdown/"Alterar" chrome
+ * verbatim — REFRESH-04).
  *
  * `useSearchParams()` requires a Suspense boundary in the App Router.
  */
@@ -46,7 +50,7 @@ function VerifyEmailForm() {
 
   if (verified) {
     return (
-      <div className="mx-auto flex max-w-md flex-col gap-4 p-4 text-center">
+      <div className="mx-auto flex max-w-md flex-col gap-4 rounded-[16px] border border-[#2A2E3B] bg-[#1B1E29] p-6 text-center md:my-8">
         <h1 className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">E-mail verificado!</h1>
         <p className="text-[14px] text-[#9A9FB0]">Sua conta foi verificada com sucesso.</p>
         <Link href="/entrar" className="text-[#2EC5FF] underline">
@@ -57,12 +61,17 @@ function VerifyEmailForm() {
   }
 
   return (
-    <div className="mx-auto flex max-w-md flex-col gap-6 p-4">
+    <div
+      role="region"
+      aria-label="Verificação de e-mail"
+      className="mx-auto flex max-w-md flex-col gap-6 rounded-[16px] border border-[#2A2E3B] bg-[#1B1E29] p-6 md:my-8"
+    >
       <div>
         <h1 className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">Verifique seu e-mail</h1>
         <p className="mt-1 text-[13px] text-[#9A9FB0]">
-          Enviamos um código de 6 dígitos para o seu e-mail. Insira-o abaixo para confirmar sua conta.
+          Enviamos um código de 6 dígitos para confirmar sua identidade e ativar sua conta.
         </p>
+        {email && <p className="mt-2 text-[13px] font-semibold text-[#F5F6FA]">{email}</p>}
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>

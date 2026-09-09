@@ -2,12 +2,13 @@
 
 /**
  * W21 — password recovery, a single-page wizard (email -> OTP code ->
- * new password), reached via Stitch screens 32a562fe876e4d0cb2eb87c2140de64e
- * and bfdd2ec9b4c944c0a3f7c26793fb02c3. Since qor-api's reset flow is now
- * OTP-based (user-confirmed), the token/email round-trip through an email
- * link isn't needed — verifyPasswordResetCode() returns a real reset token
- * interactively, in the same visit, so there's no separate
- * /recuperar-senha/redefinir route.
+ * new password), reached via Stitch screens f2beaf2f76fb4ba1a0fb667a4f25a1dd
+ * ("Esqueci Minha Senha") and 53ec56d35b604b908dfe497c540e6ef3 ("Redefinir
+ * Nova Senha"). Since qor-api's reset flow is now OTP-based (user-confirmed),
+ * the token/email round-trip through an email link isn't needed —
+ * verifyPasswordResetCode() returns a real reset token interactively, in the
+ * same visit, so there's no separate /recuperar-senha/redefinir route.
+ * Restyled to the mocks' centered card, matching /verificar-email.
  */
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -78,7 +79,11 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-md flex-col gap-6 p-4">
+    <div
+      role="region"
+      aria-label="Recuperação de senha"
+      className="mx-auto flex max-w-md flex-col gap-6 rounded-[16px] border border-[#2A2E3B] bg-[#1B1E29] p-6 md:my-8"
+    >
       <div>
         <h1 className="font-[Space_Grotesk] text-[22px] font-bold text-[#F5F6FA]">Recuperar senha</h1>
         {step === "email" && (

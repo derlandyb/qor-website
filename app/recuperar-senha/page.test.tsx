@@ -114,4 +114,30 @@ describe("app/recuperar-senha/page.tsx (password recovery wizard, integration)",
     await screen.findByText("Código inválido ou expirado.");
     expect(screen.getByLabelText("Código de verificação")).toBeInTheDocument();
   });
+
+  test("GIVEN the page renders THEN it structurally matches the Stitch centered-card layout (REFRESH-01)", () => {
+    render(<ForgotPasswordPage />);
+
+    expect(screen.getByRole("region", { name: "Recuperação de senha" })).toBeInTheDocument();
+  });
+
+  test("GIVEN the page renders THEN it uses no hardcoded colors outside the reconciled token set (REFRESH-02)", () => {
+    const { container } = render(<ForgotPasswordPage />);
+    const allowedHexes = [
+      "#F5F6FA",
+      "#9A9FB0",
+      "#666B7D",
+      "#2A2E3B",
+      "#1B1E29",
+      "#12141D",
+      "#FF2E7E",
+      "#FF4D4D",
+      "#2EC5FF",
+      "#0B0D14",
+    ];
+    const hexMatches = container.innerHTML.match(/#[0-9A-Fa-f]{6}/g) ?? [];
+    for (const hex of hexMatches) {
+      expect(allowedHexes.map((h) => h.toUpperCase())).toContain(hex.toUpperCase());
+    }
+  });
 });

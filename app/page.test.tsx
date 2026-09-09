@@ -83,4 +83,50 @@ describe("app/page.tsx (home feed, integration)", () => {
 
     await waitFor(() => expect(screen.getByText("Erro ao carregar eventos.")).toBeInTheDocument());
   });
+
+  test("GIVEN events WHEN the page mounts THEN it shows the Stitch landing tagline below the hero (REFRESH-01)", async () => {
+    global.fetch = jest.fn().mockResolvedValue(
+      jsonResponse({ data: [baseEvent({ id: 1, title: "Show A" })], next_cursor: null }),
+    );
+
+    render(<HomePage />);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          "Os melhores shows, baladas, barzinhos e festivais de Vitória, Vila Velha, Serra e Cariacica em um só lugar.",
+        ),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  test("GIVEN events WHEN the page mounts THEN it uses no hardcoded colors outside the reconciled token set (REFRESH-02)", async () => {
+    global.fetch = jest.fn().mockResolvedValue(
+      jsonResponse({ data: [baseEvent({ id: 1, title: "Show A" })], next_cursor: null }),
+    );
+
+    const { container } = render(<HomePage />);
+    await waitFor(() =>
+      expect(screen.getByRole("heading", { level: 1, name: "Show A" })).toBeInTheDocument(),
+    );
+
+    const allowedHexes = [
+      "#F5F6FA",
+      "#9A9FB0",
+      "#666B7D",
+      "#2A2E3B",
+      "#1B1E29",
+      "#12141D",
+      "#0B0D14",
+      "#FF2E7E",
+      "#FF8A1E",
+      "#B14EFF",
+      "#2EC5FF",
+      "#FF4D4D",
+    ];
+    const hexMatches = container.innerHTML.match(/#[0-9A-Fa-f]{6}/g) ?? [];
+    for (const hex of hexMatches) {
+      expect(allowedHexes.map((h) => h.toUpperCase())).toContain(hex.toUpperCase());
+    }
+  });
 });

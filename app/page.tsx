@@ -2,10 +2,15 @@
 
 /**
  * W15 — "Cena GV" home page (DISC-01-06; Stitch screen
- * 32c8c87d76994eaf9f42cd320c2759e5). Soonest-first event list across all
- * cities: HeroFeature (soonest event) -> Marquee -> EventCarousel (all
- * events) -> CityGrid. City filtering now lives only on /eventos (Task 4);
- * this page no longer owns a `city` state or CityFilterBar.
+ * f6bebdc8855f4dfbb449881e773b5b7b, "Website Landing Page (Desktop)").
+ * Soonest-first event list across all cities: HeroFeature (soonest event) ->
+ * tagline -> Marquee -> EventCarousel (all events) -> CityGrid. City
+ * filtering now lives only on /eventos (Task 4); this page no longer owns a
+ * `city` state or CityFilterBar. The mock's top nav/genre-grid belong to
+ * `NavBar` (global layout, out of this task's scope per design.md's reuse
+ * table) and a not-yet-built genre-browse feature respectively — not
+ * rebuilt here; only the structure/spacing of the existing
+ * HeroFeature/Marquee/EventCarousel/CityGrid composition is refreshed.
  */
 import { EmptyState } from "../components/design-system/EmptyState";
 import { HeroFeature } from "../components/design-system/HeroFeature";
@@ -39,6 +44,11 @@ export default function HomePage() {
       ) : (
         <>
           <HeroFeature event={events[0]} />
+
+          <p className="px-4 text-[15px] text-[#9A9FB0] sm:px-8">
+            Os melhores shows, baladas, barzinhos e festivais de Vitória, Vila Velha, Serra e
+            Cariacica em um só lugar.
+          </p>
 
           <Marquee items={MARQUEE_ITEMS} />
 

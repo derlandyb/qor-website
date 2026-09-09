@@ -2,14 +2,21 @@
 
 /**
  * W17 — event detail (DISC-07-13; Stitch screen
- * 391ebe25bee544b89dc309283b2b9008). Next.js 16 App Router: `params` is a
- * Promise — resolved via useEffect/useState (see qor-admin's own
- * eventos/[id]/editar page for why, same rationale applies here).
+ * bee7ac2c328e4c5383b2ad068048ffe3, "Detalhes do Evento (Desktop)").
+ * Next.js 16 App Router: `params` is a Promise — resolved via
+ * useEffect/useState (see qor-admin's own eventos/[id]/editar page for why,
+ * same rationale applies here).
  *
  * Cancelled/ended events render a banner instead of full content
  * (event-discovery/design.md's Error Handling table) — the ticket button
  * is hidden in both cases, per that table's "instead of full content"
  * wording (the safest reading; not explicitly spelled out further).
+ *
+ * Section headings ("Sobre o evento" / "Localização") added to match the
+ * mock's labeled sections; the mock's lineup/schedule block has no backing
+ * data field on `Event` so it isn't rebuilt here (REFRESH-04 — rewritten
+ * idiomatically against what the domain model actually carries, not
+ * copy-pasted from the mock).
  */
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -145,9 +152,11 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
 
       <div className="flex flex-col gap-6 px-4 sm:px-8 lg:grid lg:grid-cols-3 lg:items-start lg:gap-8">
         <div className="flex flex-col gap-3 lg:col-span-2">
+          <h2 className="text-[15px] font-semibold text-[#F5F6FA]">Sobre o evento</h2>
           <p className="text-[14px] text-[#F5F6FA]">{event.description}</p>
 
           <div id="map" className="flex flex-col gap-2">
+            <h2 className="text-[15px] font-semibold text-[#F5F6FA]">Localização</h2>
             <p className="text-[13px] text-[#9A9FB0]">{event.address}</p>
             <GoogleMap address={event.address} />
           </div>

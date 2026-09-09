@@ -252,4 +252,20 @@ describe("app/eventos/[id]/page.tsx (event detail, integration)", () => {
 
     expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled();
   });
+
+  test("GIVEN an event WHEN it renders THEN it shows the Stitch mock's 'Sobre o evento' and 'Localização' section headings (REFRESH-01)", async () => {
+    global.fetch = jest.fn().mockImplementation((input: string | URL) => {
+      if (isDetailRequest(input)) {
+        return Promise.resolve(jsonResponse({ data: baseEvent({ address: "Rua A, 100" }) }));
+      }
+      return Promise.resolve(listResponse([]));
+    });
+
+    render(<EventDetailPage params={Promise.resolve({ id: "1" })} />);
+
+    await screen.findByText("Show A");
+
+    expect(screen.getByRole("heading", { level: 2, name: "Sobre o evento" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "Localização" })).toBeInTheDocument();
+  });
 });

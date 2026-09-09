@@ -1,9 +1,9 @@
 import { renderHook, waitFor, act } from "@testing-library/react";
-import { useEventList, useEventDetail } from "./useEvents";
+import { useEventList, useEventDetail, useMapEvents } from "./useEvents";
 import * as client from "../lib/api/client";
 import { ApiError } from "../lib/api/http";
 import type { City } from "../lib/enums/city";
-import type { CursorPage, Event, EventDetail } from "../lib/api/types";
+import type { CursorPage, DataEnvelope, Event, EventDetail, MapEvent } from "../lib/api/types";
 
 jest.mock("../lib/api/client");
 
@@ -141,5 +141,70 @@ describe("useEventDetail", () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.error).toBe("Evento não encontrado.");
     expect(result.current.event).toBeNull();
+  });
+});
+
+function makeMapEvent(overrides?: Partial<MapEvent>): MapEvent {
+  return { ...makeEvent(), latitude: -20.3, longitude: -40.3, ...overrides };
+}
+
+describe("useMapEvents", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  test("GIVEN a city query WHEN getMapEvents resolves THEN it exposes the geocoded events", async () => {
+    mockedClient.getMapEvents.mockResolvedValue({ data: [makeMapEvent()] } as DataEnvelope<MapEvent[]>);
+
+    const { result } = renderHook(() => useMapEvents({ city: "vitoria" as City }));
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.events).toEqual([makeMapEvent()]);
+    expect(mockedClient.getMapEvents).toHaveBeenCalledWith({ city: "vitoria", bounds: undefined });
+  });
+
+  test("GIVEN getMapEvents rejects WHEN the hook mounts THEN it surfaces the ApiError message", async () => {
+    mockedClient.getMapEvents.mockRejectedValue(new ApiError(422, "Informe uma cidade ou os quatro limites do mapa."));
+
+    const { result } = renderHook(() => useMapEvents({}));
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.error).toBe("Informe uma cidade ou os quatro limites do mapa.");
+    expect(result.current.events).toEqual([]);
+  });
+
+  test("GIVEN a bounds query WHEN the bounds change THEN it re-queries with the new bounds (MAPUI-03)", async () => {
+    mockedClient.getMapEvents.mockResolvedValue({ data: [makeMapEvent({ id: 1 })] } as DataEnvelope<MapEvent[]>);
+
+    const { result, rerender } = renderHook(({ bounds }) => useMapEvents({ bounds }), {
+      initialProps: { bounds: { north: 1, south: 0, east: 1, west: 0 } },
+    });
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(mockedClient.getMapEvents).toHaveBeenCalledTimes(1);
+
+    mockedClient.getMapEvents.mockResolvedValueOnce({ data: [makeMapEvent({ id: 2 })] } as DataEnvelope<MapEvent[]>);
+    rerender({ bounds: { north: 2, south: 1, east: 2, west: 1 } });
+
+    await waitFor(() => expect(mockedClient.getMapEvents).toHaveBeenCalledTimes(2));
+    expect(mockedClient.getMapEvents).toHaveBeenLastCalledWith({
+      city: undefined,
+      bounds: { north: 2, south: 1, east: 2, west: 1 },
+    });
+    await waitFor(() => expect(result.current.events).toEqual([makeMapEvent({ id: 2 })]));
+  });
+
+  test("GIVEN a city query WHEN the city changes THEN it re-queries with the new city (MAPUI-03)", async () => {
+    mockedClient.getMapEvents.mockResolvedValue({ data: [] } as unknown as DataEnvelope<MapEvent[]>);
+
+    const { result, rerender } = renderHook(({ city }) => useMapEvents({ city }), {
+      initialProps: { city: "vitoria" as City },
+    });
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    rerender({ city: "serra" as City });
+
+    await waitFor(() =>
+      expect(mockedClient.getMapEvents).toHaveBeenLastCalledWith({ city: "serra", bounds: undefined }),
+    );
   });
 });

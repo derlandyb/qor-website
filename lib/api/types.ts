@@ -32,6 +32,12 @@ export interface EventDetail extends Event {
   tagged_promoters: EventPromoter[];
 }
 
+/** `GET /events/map` result item — only geocoded events are ever returned, so lat/lng are always resolved (never null) here. */
+export interface MapEvent extends Event {
+  latitude: number;
+  longitude: number;
+}
+
 export interface CursorPage<T> {
   data: T[];
   next_cursor: string | null;

@@ -11,6 +11,7 @@ import type {
   Event,
   EventDetail,
   FanUser,
+  MapEvent,
   MessageEnvelope,
   Preferences,
   UpdatedFanUser,
@@ -34,6 +35,21 @@ export function listEvents(filters: ListEventsFilters = {}) {
 
 export function getEvent(id: number) {
   return apiRequest<DataEnvelope<EventDetail>>(`/events/${id}`);
+}
+
+/** A bounding box takes precedence when both are given — mirrors qor-api's `MapEventsRequest`/`GetMapEvents` (bounds, then city). */
+export interface MapEventsFilters {
+  city?: City;
+  bounds?: { north: number; south: number; east: number; west: number };
+}
+
+export function getMapEvents(filters: MapEventsFilters) {
+  const { city, bounds } = filters;
+  return apiRequest<DataEnvelope<MapEvent[]>>("/events/map", {
+    query: bounds
+      ? { north: bounds.north, south: bounds.south, east: bounds.east, west: bounds.west }
+      : { city },
+  });
 }
 
 // --- Favorites ---

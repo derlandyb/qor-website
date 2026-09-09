@@ -7,10 +7,11 @@
  * list from page 1, same as the initial load.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getEvent, listEvents, type ListEventsFilters } from "../lib/api/client";
+import { getEvent, getMapEvents, listEvents, type ListEventsFilters } from "../lib/api/client";
 import { ApiError } from "../lib/api/http";
 import { EVENT_LIST_POLLING_INTERVAL_SECONDS } from "../lib/config";
-import type { Event, EventDetail } from "../lib/api/types";
+import type { City } from "../lib/enums/city";
+import type { Event, EventDetail, MapEvent } from "../lib/api/types";
 
 function messageOf(err: unknown): string {
   return err instanceof ApiError ? err.message : "Erro inesperado.";
@@ -131,4 +132,54 @@ export function useEventDetail(id: number | null): EventDetailState {
   }, [refetch]);
 
   return { event, loading: id === null || loading, error, refetch };
+}
+
+export interface MapEventsQuery {
+  city?: City;
+  bounds?: { north: number; south: number; east: number; west: number };
+}
+
+export interface MapEventsState {
+  events: MapEvent[];
+  loading: boolean;
+  error: string | null;
+}
+
+/**
+ * T22/MAPUI-01..03 — wraps `GET /events/map`. The caller (the `/mapa` page)
+ * owns which of `city`/`bounds` is currently set; a change to either value
+ * here replaces the whole result set with a fresh query (MAPUI-03: pan/zoom
+ * or a city filter re-queries the geo endpoint, never client-side filters
+ * one static fetch).
+ */
+export function useMapEvents(query: MapEventsQuery): MapEventsState {
+  const { city, bounds } = query;
+  const [events, setEvents] = useState<MapEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const refetch = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await getMapEvents({ city, bounds });
+      setEvents(result.data);
+    } catch (err) {
+      setError(messageOf(err));
+      setEvents([]);
+    } finally {
+      setLoading(false);
+    }
+    // bounds is a plain value object rebuilt by the caller on every pan/zoom —
+    // compare by field, not by reference, so an equal-but-new object doesn't
+    // trigger a redundant re-query.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [city, bounds?.north, bounds?.south, bounds?.east, bounds?.west]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void refetch();
+  }, [refetch]);
+
+  return { events, loading, error };
 }
